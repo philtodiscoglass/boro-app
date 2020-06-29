@@ -1,13 +1,21 @@
 const mongoose = require('mongoose')
 
-const exampleSchema = new mongoose.Schema({
+const glassSchema = new mongoose.Schema({
   title: {
     type: String,
     required: true
   },
-  text: {
+  body: {
     type: String,
     required: true
+  },
+  price: {
+    type: Number,
+    required: true
+  },
+  imageUrl: {
+    type: String,
+    rquired: true
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
@@ -18,4 +26,4 @@ const exampleSchema = new mongoose.Schema({
   timestamps: true
 })
 
-module.exports = mongoose.model('Example', exampleSchema)
+module.exports = mongoose.model('Glass', glassSchema)
