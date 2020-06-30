@@ -1,6 +1,6 @@
 const mongoose = require('mongoose')
 
-const glassSchema = new mongoose.Schema({
+const glassPostSchema = new mongoose.Schema({
   title: {
     type: String,
     required: true
@@ -26,4 +26,4 @@ const glassSchema = new mongoose.Schema({
   timestamps: true
 })
 
-module.exports = mongoose.model('Glass', glassSchema)
+module.exports = mongoose.model('GlassPost', glassPostSchema)

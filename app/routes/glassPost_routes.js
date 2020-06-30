@@ -3,8 +3,8 @@ const express = require('express')
 // Passport docs: http://www.passportjs.org/docs/
 const passport = require('passport')
 
-// pull in Mongoose model for glasses
-const Glass = require('../models/glass')
+// pull in Mongoose model for glassPosts
+const GlassPost = require('../models/glassPost')
 
 // this is a collection of methods that help us detect situations when we need
 // to throw a custom error
@@ -17,7 +17,7 @@ const handle404 = customErrors.handle404
 const requireOwnership = customErrors.requireOwnership
 
 // this is middleware that will remove blank fields from `req.body`, e.g.
-// { glass: { title: '', text: 'foo' } } -> { glass: { text: 'foo' } }
+// { glassPost: { title: '', text: 'foo' } } -> { glassPost: { text: 'foo' } }
 const removeBlanks = require('../../lib/remove_blank_fields')
 // passing this as a second argument to `router.<verb>` will make it
 // so that a token MUST be passed for that route to be available
@@ -28,43 +28,43 @@ const requireToken = passport.authenticate('bearer', { session: false })
 const router = express.Router()
 
 // INDEX
-// GET /glasses
-router.get('/glasses', requireToken, (req, res, next) => {
-  Glass.find()
-    .then(glasses => {
-      // `glasses` will be an array of Mongoose documents
+// GET /glassPosts
+router.get('/glass-posts', requireToken, (req, res, next) => {
+  GlassPost.find()
+    .then(glassPosts => {
+      // `glassPosts` will be an array of Mongoose documents
       // we want to convert each one to a POJO, so we use `.map` to
       // apply `.toObject` to each one
-      return glasses.map(glass => glass.toObject())
+      return glassPosts.map(glassPost => glassPost.toObject())
     })
-    // respond with status 200 and JSON of the glasses
-    .then(glasses => res.status(200).json({ glasses: glasses }))
+    // respond with status 200 and JSON of the glassPosts
+    .then(glassPosts => res.status(200).json({ glassPosts: glassPosts }))
     // if an error occurs, pass it to the handler
     .catch(next)
 })
 
 // SHOW
-// GET /glasses/5a7db6c74d55bc51bdf39793
-router.get('/glasses/:id', requireToken, (req, res, next) => {
+// GET /glassPosts/5a7db6c74d55bc51bdf39793
+router.get('/glass-posts/:id', requireToken, (req, res, next) => {
   // req.params.id will be set based on the `:id` in the route
-  Glass.findById(req.params.id)
+  GlassPost.findById(req.params.id)
     .then(handle404)
-    // if `findById` is succesful, respond with 200 and "glass" JSON
-    .then(glass => res.status(200).json({ glass: glass.toObject() }))
+    // if `findById` is succesful, respond with 200 and "glassPost" JSON
+    .then(glassPost => res.status(200).json({ glassPost: glassPost.toObject() }))
     // if an error occurs, pass it to the handler
     .catch(next)
 })
 
 // CREATE
-// POST /glasses
-router.post('/glasses', requireToken, (req, res, next) => {
-  // set owner of new glass to be current user
-  req.body.glass.owner = req.user.id
+// POST /glassPosts
+router.post('/glass-posts', requireToken, (req, res, next) => {
+  // set owner of new glassPost to be current user
+  req.body.glassPost.owner = req.user.id
 
-  Glass.create(req.body.glass)
-    // respond to succesful `create` with status 201 and JSON of new "glass"
-    .then(glass => {
-      res.status(201).json({ glass: glass.toObject() })
+  GlassPost.create(req.body.glassPost)
+    // respond to succesful `create` with status 201 and JSON of new "glassPost"
+    .then(glassPost => {
+      res.status(201).json({ glassPost: glassPost.toObject() })
     })
     // if an error occurs, pass it off to our error handler
     // the error handler needs the error message and the `res` object so that it
@@ -73,21 +73,21 @@ router.post('/glasses', requireToken, (req, res, next) => {
 })
 
 // UPDATE
-// PATCH /glasses/5a7db6c74d55bc51bdf39793
-router.patch('/glasses/:id', requireToken, removeBlanks, (req, res, next) => {
+// PATCH /glassPosts/5a7db6c74d55bc51bdf39793
+router.patch('/glass-posts/:id', requireToken, removeBlanks, (req, res, next) => {
   // if the client attempts to change the `owner` property by including a new
   // owner, prevent that by deleting that key/value pair
-  delete req.body.glass.owner
+  delete req.body.glassPost.owner
 
-  Glass.findById(req.params.id)
+  GlassPost.findById(req.params.id)
     .then(handle404)
-    .then(glass => {
+    .then(glassPost => {
       // pass the `req` object and the Mongoose record to `requireOwnership`
       // it will throw an error if the current user isn't the owner
-      requireOwnership(req, glass)
+      requireOwnership(req, glassPost)
 
       // pass the result of Mongoose's `.update` to the next `.then`
-      return glass.updateOne(req.body.glass)
+      return glassPost.updateOne(req.body.glassPost)
     })
     // if that succeeded, return 204 and no JSON
     .then(() => res.sendStatus(204))
@@ -96,15 +96,15 @@ router.patch('/glasses/:id', requireToken, removeBlanks, (req, res, next) => {
 })
 
 // DESTROY
-// DELETE /glasses/5a7db6c74d55bc51bdf39793
-router.delete('/glasses/:id', requireToken, (req, res, next) => {
-  Glass.findById(req.params.id)
+// DELETE /glassPosts/5a7db6c74d55bc51bdf39793
+router.delete('/glass-posts/:id', requireToken, (req, res, next) => {
+  GlassPost.findById(req.params.id)
     .then(handle404)
-    .then(glass => {
-      // throw an error if current user doesn't own `glass`
-      requireOwnership(req, glass)
+    .then(glassPost => {
+      // throw an error if current user doesn't own `glassPost`
+      requireOwnership(req, glassPost)
       // delete the glass ONLY IF the above didn't throw
-      glass.deleteOne()
+      glassPost.deleteOne()
     })
     // send back 204 and no content if the deletion succeeded
     .then(() => res.sendStatus(204))
