@@ -15,7 +15,7 @@ const glassPostSchema = new mongoose.Schema({
   },
   imageUrl: {
     type: String,
-    rquired: true
+    required: false
   },
   owner: {
     type: mongoose.Schema.Types.ObjectId,
