@@ -13,8 +13,7 @@ curl "${API}${URL_PATH}" \
       "title": "'"${TITLE}"'",
       "body": "'"${BODY}"'",
       "price": "'"${PRICE}"'",
-      "imageUrl": "'"${IMGURL}"'",
-      "owner": "'"${OWNER}"'"
+      "imageUrl": "'"${IMGURL}"'"
     }
   }'
 

@@ -48,6 +48,7 @@ router.get('/glass-posts', requireToken, (req, res, next) => {
 router.get('/glass-posts/:id', requireToken, (req, res, next) => {
   // req.params.id will be set based on the `:id` in the route
   GlassPost.findById(req.params.id)
+    .populate('owner')
     .then(handle404)
     // if `findById` is succesful, respond with 200 and "glassPost" JSON
     .then(glassPost => res.status(200).json({ glassPost: glassPost.toObject() }))
