@@ -12,8 +12,7 @@ curl "${API}${URL_PATH}" \
     "glassPost": {
       "title": "'"${TITLE}"'",
       "body": "'"${BODY}"'",
-      "price": "'"${PRICE}"'",
-      "imageUrl": "'"${IMGURL}"'"
+      "price": "'"${PRICE}"'"
     }
   }'
 
